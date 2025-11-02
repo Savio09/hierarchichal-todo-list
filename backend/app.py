@@ -18,6 +18,11 @@ CORS(app, supports_credentials=True)
 # Database configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
+    "connect_args": {"sslmode": "require"},
+}
 
 # Secret key for sessions and JWT
 app.config["SECRET_KEY"] = os.getenv(

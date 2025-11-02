@@ -51,11 +51,11 @@ def login():
     data = request.get_json()
 
     # Validate required fields
-    if not data.get("username") or not data.get("password"):
-        return jsonify({"error": "Username and password are required"}), 400
+    if not data.get("email") or not data.get("password"):
+        return jsonify({"error": "email and password are required"}), 400
 
     # Find user
-    user = User.query.filter_by(username=data["username"]).first()
+    user = User.query.filter_by(email=data["email"]).first()
 
     # Validate password
     if not user or not user.check_password(data["password"]):
