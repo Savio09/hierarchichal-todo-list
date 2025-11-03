@@ -2,8 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/Home.css";
+import { useAuth } from "../contexts/AuthContext.jsx";
 
 function Home() {
+  const { isAuthenticated } = useAuth();
+  const url = isAuthenticated() ? "/dashboard" : "/login";
   return (
     <div className="landing-page">
       <Header />
@@ -21,8 +24,8 @@ function Home() {
             </p>
 
             <div className="hero-buttons">
-              <Link to="/login" className="btn btn-primary">
-                Get Started
+              <Link to={url} className="btn btn-primary">
+                {isAuthenticated() ? "Go to Dashboard" : "Get Started"}
               </Link>
               <Link to="#features" className="btn btn-secondary">
                 Learn More

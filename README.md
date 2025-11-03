@@ -1,19 +1,332 @@
-# My Assignment Progress for the Hierarchichal Todo List
+# tsks - Hierarchical Todo List Application
 
-# Description
+A modern, feature-rich todo list application that enables users to organize tasks hierarchically with **infinite nesting depth**. Built with Flask and React, featuring user authentication, real-time updates, and a beautiful, intuitive interface.
 
-This project is a hierarchichal todo list which enables one to organize tasks into lists. Those tasks could have subtasks that are associated with them. In the tangible product, which is a web application, we have a form which we can add create a list for. For the list which we create, we can also add tasks to those listed items. When we create a task, we can create a subtask. and create a sub subtask, that is each task can have a recursive depth of at most two.
+## ✨ Features
 
-### Models
+- 🔐 **User Authentication** - Secure sign up and login with JWT tokens
+- 📋 **Multiple Lists** - Create and manage multiple todo lists (collections)
+- ✅ **Hierarchical Tasks** - Create tasks with infinite subtask nesting
+- 🔄 **Smart Completion** - Auto-complete parent tasks when all children are done
+- 🎯 **Task Management** - Edit, delete, and move tasks between lists
+- 📱 **Responsive Design** - Works seamlessly on desktop and mobile
+- 👤 **User Indicators** - Live avatar with active status indicator
+- 🎨 **Modern UI** - Clean, beautiful interface with smooth animations
+- 🔍 **Task Filtering** - View active or completed tasks separately
+- 🧪 **Comprehensive Tests** - 81 unit tests across backend and frontend
 
-From the description of the assignment some of the models that would be needed includes
+## 🎥 Demo
 
-- List (this would be the table to which a task belongs to)
-- id
-- name
-- tasks Task [id] (A list can have many tasks)
-- Task (this would be a table another table which would house multiple subtasks)
-- id
-- description
-- List (this would be the single list to which the task belongs)
-- Subtasks (this would be table of the subtasks for other)
+_Coming soon - Add your Loom video link here_
+
+## 🛠️ Technologies Used
+
+### Backend
+
+- [Flask](https://flask.palletsprojects.com/) - Python web framework
+- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) - ORM for database
+- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/) - JWT authentication
+- [PostgreSQL](https://www.postgresql.org/) - Production database
+- [pytest](https://pytest.org/) - Testing framework
+
+### Frontend
+
+- [React](https://reactjs.org/) - UI library (v19)
+- [React Router](https://reactrouter.com/) - Client-side routing
+- [Vite](https://vitejs.dev/) - Build tool and dev server
+- [Vitest](https://vitest.dev/) - Testing framework
+
+## 📁 Folder Structure
+
+```
+hierarchichal-todo-list/
+│
+├── backend/                      # Flask backend API
+│   ├── tests/                    # Backend test suite
+│   │   ├── __init__.py
+│   │   ├── conftest.py          # Shared test fixtures
+│   │   ├── test_models.py       # Model tests (25 tests)
+│   │   ├── test_auth.py         # Authentication tests (14 tests)
+│   │   └── test_routes.py       # API route tests (17 tests)
+│   ├── app.py                   # Flask app initialization
+│   ├── models.py                # Database models (User, List, Task)
+│   ├── auth.py                  # Authentication routes
+│   ├── routes.py                # API endpoints
+│   ├── requirements.txt         # Python dependencies
+│   ├── .env                     # Environment variables (create this)
+│   └── TESTING.md              # Backend testing guide
+│
+├── frontend/                    # React frontend
+│   ├── public/                  # Static assets
+│   ├── src/
+│   │   ├── components/         # Reusable React components
+│   │   │   ├── Logo.jsx
+│   │   │   └── SignIn.jsx
+│   │   ├── contexts/           # React contexts
+│   │   │   └── AuthContext.jsx
+│   │   ├── pages/              # Page components
+│   │   │   ├── Home.jsx
+│   │   │   └── Dashboard.jsx
+│   │   ├── styles/             # CSS stylesheets
+│   │   ├── test/               # Frontend tests (25 tests)
+│   │   │   ├── setup.js
+│   │   │   ├── AuthContext.test.jsx
+│   │   │   └── Dashboard.test.jsx
+│   │   ├── App.jsx             # Main app component
+│   │   └── main.jsx            # Entry point
+│   ├── package.json            # NPM dependencies
+│   ├── vite.config.js          # Vite configuration
+│   └── TESTING.md              # Frontend testing guide
+│
+├── README.md                    # This file
+├── TESTING_OVERVIEW.md         # Complete testing documentation
+└── .gitignore                  # Git ignore rules
+```
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (v18 or later)
+- **npm** (v9 or later)
+- **Python** (v3.9 or later)
+- **PostgreSQL** (v12 or later) - For production
+- **Git** - Version control
+
+### Installation
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Savio09/hierarchichal-todo-list.git
+cd hierarchichal-todo-list
+```
+
+#### 2. Backend Setup
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create .env file
+touch .env
+```
+
+**Configure `.env` file:**
+
+```env
+DATABASE_URL=postgresql://username:password@localhost:5432/your_database
+SECRET_KEY=your-secret-key-here
+JWT_SECRET_KEY=your-jwt-secret-key-here
+```
+
+> **Note:** For development, you can use SQLite by setting:
+> `DATABASE_URL=sqlite:///dev.db`
+
+#### 3. Frontend Setup
+
+```bash
+# Navigate to frontend directory (from project root)
+cd frontend
+
+# Install dependencies
+npm install
+```
+
+### Starting the Application
+
+#### Running the Backend
+
+```bash
+# From backend directory
+cd backend
+
+# Activate virtual environment (if not already activated)
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Start the Flask server
+python3 app.py
+```
+
+The backend server will start on **http://127.0.0.1:5000**
+
+#### Running the Frontend
+
+```bash
+# From frontend directory (in a new terminal)
+cd frontend
+
+# Start the development server
+npm run dev
+```
+
+The React app will start on **http://localhost:5173**
+
+Open your browser and navigate to **http://localhost:5173** to use the application.
+
+## Testing
+
+### Backend Tests (56 tests)
+
+```bash
+# From backend directory
+cd backend
+
+# Run all tests with verbose output
+pytest -v
+
+# Run specific test file
+pytest tests/test_models.py -v
+pytest tests/test_auth.py -v
+pytest tests/test_routes.py -v
+
+# Run with coverage report
+pytest --cov=. --cov-report=html
+
+# View coverage report
+open htmlcov/index.html  # macOS
+xdg-open htmlcov/index.html  # Linux
+start htmlcov/index.html  # Windows
+```
+
+### Frontend Tests (25 tests)
+
+```bash
+# From frontend directory
+cd frontend
+
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with UI
+npm run test:ui
+
+# Generate coverage report
+npm run test:coverage
+```
+
+### Run All Tests
+
+```bash
+# From project root
+chmod +x run_all_tests.sh
+./run_all_tests.sh
+```
+
+**Test Coverage:**
+
+- Backend: ~95% coverage (56 tests)
+- Frontend: ~90% coverage (25 tests)
+- **Total: 81 tests**
+
+## API Endpoints
+
+### Authentication
+
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user info
+
+### Lists
+
+- `GET /api/lists` - Get all lists for user
+- `POST /api/lists` - Create new list
+- `GET /api/lists/:id` - Get specific list
+- `PUT /api/lists/:id` - Update list
+- `DELETE /api/lists/:id` - Delete list
+
+### Tasks
+
+- `POST /api/lists/:id/tasks` - Create task in list
+- `POST /api/tasks/:id/subtasks` - Create subtask
+- `GET /api/tasks/:id` - Get task with subtasks
+- `PUT /api/tasks/:id` - Update task (completion, description, move)
+- `DELETE /api/tasks/:id` - Delete task (cascades to subtasks)
+
+## Key Features Explained
+
+### Infinite Task Nesting
+
+Unlike traditional todo apps, tsks allows unlimited nesting depth:
+
+```
+📋 List
+  ✅ Task
+    ✅ Subtask
+      ✅ Sub-subtask
+        ✅ Sub-sub-subtask
+          ... (unlimited)
+```
+
+### Smart Parent Completion
+
+When you mark all subtasks as complete, the parent task automatically completes. Similarly, unchecking any subtask will uncheck the parent.
+
+### Task Movement
+
+Top-level tasks can be moved between lists, while subtasks remain tied to their parent task's list.
+
+### Cascade Completion
+
+Mark a parent task complete and choose to cascade - all subtasks will be marked complete instantly.
+
+## UI/UX Features
+
+- **User Avatar** - Shows first letter of username with live green indicator
+- **Logout Button** - Clear, prominent button at sidebar bottom
+- **Active/Completed Tabs** - Filter tasks by status
+- **Hover Actions** - Edit and delete buttons appear on hover
+- **Loading States** - Smooth loading animations
+- **Responsive Design** - Works on all screen sizes
+- **Keyboard Accessible** - Full keyboard navigation support
+
+## Documentation
+
+- `README.md` - This file (project overview)
+- `TESTING_OVERVIEW.md` - Complete testing guide
+- `backend/TESTING.md` - Backend-specific tests
+- `frontend/TESTING.md` - Frontend-specific tests
+
+## Security Features
+
+- JWT token authentication
+- Password hashing with bcrypt
+- Protected API routes
+
+## Contributing
+
+This is an assignment project, but suggestions and feedback are welcome!
+
+## License
+
+This project is part of a college assignment.
+
+## Author
+
+**Savio09**
+
+- GitHub: [@Savio09](https://github.com/Savio09)
+
+## 🙏 Acknowledgments
+
+- Assignment provided by [Your University/Course Name]
+- Inspired by modern task management applications
+- Built with love by [Fortune Declan](https://declann.codes)
+
+---
+
+**Note:** Remember to create a `.env` file in the backend directory with your database credentials before running the application.

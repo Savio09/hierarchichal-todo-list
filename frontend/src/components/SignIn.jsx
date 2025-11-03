@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "./Logo.jsx";
 import "../styles/AuthForm.css";
+import { useAuth } from "../contexts/AuthContext.jsx";
 
 function AuthForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const isSignUp = location.pathname === "/sign-up";
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -43,11 +45,7 @@ function AuthForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store the JWT token
-        localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Redirect to dashboard
+        login(data?.access_token, data.user);
         navigate("/dashboard");
       } else {
         setError(data.error || "Authentication failed");

@@ -97,3 +97,10 @@ body {
     font-size: 14px;
   }
 }
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

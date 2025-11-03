@@ -130,6 +130,9 @@ def task_detail(task_id):
                 # Just update this task
                 task.completed = new_status
 
+            # After updating completion status, check if parent should be updated
+            task.update_parent_completion()
+
         # Support moving top-level tasks to a different list
         if "list_id" in data:
             new_list_id = data["list_id"]

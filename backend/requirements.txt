@@ -7,3 +7,8 @@ Flask-CORS
 Flask-Login
 Flask-Bcrypt
 Flask-JWT-Extended
+
+# Testing dependencies
+pytest
+pytest-cov
+pytest-flask

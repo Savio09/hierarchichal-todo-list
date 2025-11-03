@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 import Logo from "../components/Logo.jsx";
+import { useAuth } from "../contexts/AuthContext.jsx";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -20,16 +21,43 @@ function Dashboard() {
   const [showMoveModal, setShowMoveModal] = useState(false);
   const [taskToMove, setTaskToMove] = useState(null);
   const [activeTab, setActiveTab] = useState("active");
+  const [showEditListModal, setShowEditListModal] = useState(false);
+  const [listToEdit, setListToEdit] = useState(null);
+  const [editListName, setEditListName] = useState("");
+  const [editListDescription, setEditListDescription] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const { logout, isAuthenticated, loading } = useAuth();
 
   // Check if user is authenticated
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
+    // Wait for auth context to finish loading
+    if (loading) return;
+
+    if (!isAuthenticated()) {
       navigate("/login");
     } else {
       fetchLists();
+      fetchCurrentUser();
     }
-  }, [navigate]);
+  }, [navigate, isAuthenticated, loading]);
+
+  // Fetch current user info
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch("http://127.0.0.1:5000/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUser(data);
+      }
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+    }
+  };
 
   // Update selectedList when lists change to keep it in sync
   useEffect(() => {
@@ -268,9 +296,83 @@ function Dashboard() {
     }
   };
 
+  // Delete a list
+  const handleDeleteList = async (listId) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this list? This will also delete all tasks in it."
+      )
+    ) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/lists/${listId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        // If the deleted list was selected, clear selection
+        if (selectedList?.id === listId) {
+          setSelectedList(null);
+        }
+        fetchLists();
+      }
+    } catch (error) {
+      console.error("Error deleting list:", error);
+    }
+  };
+
+  // Edit a list
+  const handleEditList = async (e) => {
+    e.preventDefault();
+    if (!listToEdit) return;
+
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/lists/${listToEdit.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: editListName,
+            description: editListDescription,
+          }),
+        }
+      );
+      if (response.ok) {
+        setShowEditListModal(false);
+        setListToEdit(null);
+        setEditListName("");
+        setEditListDescription("");
+        fetchLists();
+      }
+    } catch (error) {
+      console.error("Error editing list:", error);
+    }
+  };
+
+  // Open edit modal with list data
+  const openEditListModal = (list, e) => {
+    e.stopPropagation(); // Prevent selecting the list
+    setListToEdit(list);
+    setEditListName(list.name);
+    setEditListDescription(list.description || "");
+    setShowEditListModal(true);
+  };
+
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
+    logout();
     navigate("/login");
   };
 
@@ -409,15 +511,33 @@ function Dashboard() {
     );
   };
 
+  // Show loading indicator while checking authentication
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard">
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <Logo />
-          <button className="logout-btn" onClick={handleLogout} title="Logout">
-            ⎋
-          </button>
+          {currentUser && (
+            <div
+              className="user-avatar"
+              title={`Logged in as ${currentUser.username}`}
+            >
+              <div className="avatar-circle">
+                {currentUser.username.charAt(0).toUpperCase()}
+              </div>
+              <div className="active-indicator"></div>
+            </div>
+          )}
         </div>
 
         <div className="collections-section">
@@ -453,6 +573,25 @@ function Dashboard() {
                     }}
                   ></div>
                   <span className="collection-name">{list.name}</span>
+                  <div className="collection-actions">
+                    <button
+                      className="collection-action-btn edit-btn"
+                      onClick={(e) => openEditListModal(list, e)}
+                      title="Edit list"
+                    >
+                      ✎
+                    </button>
+                    <button
+                      className="collection-action-btn delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteList(list.id);
+                      }}
+                      title="Delete list"
+                    >
+                      🗑
+                    </button>
+                  </div>
                   <span className="collection-count">
                     {list.tasks?.length || 0}
                   </span>
@@ -460,6 +599,14 @@ function Dashboard() {
               ))
             )}
           </div>
+        </div>
+
+        {/* Logout Button at Bottom */}
+        <div className="sidebar-footer">
+          <button className="logout-button" onClick={handleLogout}>
+            <span className="logout-icon">⎋</span>
+            <span className="logout-text">Logout</span>
+          </button>
         </div>
       </aside>
 
@@ -694,6 +841,49 @@ function Dashboard() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit List Modal */}
+      {showEditListModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowEditListModal(false)}
+        >
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit List</h2>
+            <form onSubmit={handleEditList}>
+              <input
+                type="text"
+                placeholder="List name"
+                value={editListName}
+                onChange={(e) => setEditListName(e.target.value)}
+                required
+                autoFocus
+              />
+              <input
+                type="text"
+                placeholder="Description (optional)"
+                value={editListDescription}
+                onChange={(e) => setEditListDescription(e.target.value)}
+              />
+              <div className="modal-buttons">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={() => {
+                    setShowEditListModal(false);
+                    setListToEdit(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-submit">
+                  Save
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

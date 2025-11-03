@@ -126,6 +126,29 @@ class Task(db.Model):
         for subtask in self.subtasks:
             subtask.set_completion_cascade(completed_status)
 
+    def update_parent_completion(self):
+        """Check if all siblings are complete and update parent accordingly.
+        This should be called after a task's completion status changes."""
+        if self.parent is None:
+            # This is a top-level task, no parent to update
+            return
+
+        # Check if all siblings (including self) are complete
+        all_siblings_complete = all(
+            sibling.completed for sibling in self.parent.subtasks
+        )
+
+        if all_siblings_complete and not self.parent.completed:
+            # All subtasks are complete, mark parent as complete
+            self.parent.completed = True
+            # Recursively check the parent's parent
+            self.parent.update_parent_completion()
+        elif not all_siblings_complete and self.parent.completed:
+            # At least one subtask is incomplete, mark parent as incomplete
+            self.parent.completed = False
+            # Recursively check the parent's parent
+            self.parent.update_parent_completion()
+
     def to_dict(self, include_subtasks=True):
         result = {
             "id": self.id,
