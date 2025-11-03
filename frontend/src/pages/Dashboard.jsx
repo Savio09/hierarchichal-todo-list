@@ -647,7 +647,7 @@ function Dashboard() {
       <aside className="sidebar">
         <div className="sidebar-header">
           <Logo />
-          {currentUser && (
+          {currentUser && currentUser.username && (
             <div
               className="user-avatar"
               title={`Logged in as ${currentUser.username}`}

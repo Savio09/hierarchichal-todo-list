@@ -3,7 +3,7 @@
  * Tests authentication state management and localStorage integration
  */
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 
 describe("AuthContext", () => {
@@ -126,8 +126,11 @@ describe("AuthContext", () => {
     consoleSpy.mockRestore();
   });
 
-  it("should update isAuthenticated after login and logout", () => {
-    localStorage.getItem.mockReturnValue(null);
+  it("should update isAuthenticated after login and logout", async () => {
+    const storage = {};
+    localStorage.getItem.mockImplementation((key) => storage[key] || null);
+    localStorage.setItem.mockImplementation((key, value) => { storage[key] = value; });
+    localStorage.removeItem.mockImplementation((key) => { delete storage[key]; });
 
     const wrapper = ({ children }) => <AuthProvider>{children}</AuthProvider>;
     const { result } = renderHook(() => useAuth(), { wrapper });
@@ -136,26 +139,34 @@ describe("AuthContext", () => {
     expect(result.current.isAuthenticated()).toBe(false);
 
     // Login
-    act(() => {
+    await act(async () => {
       result.current.login("token", { id: 1, username: "test" });
+      await new Promise(resolve => setTimeout(resolve, 0)); // Allow state update
     });
 
     expect(result.current.isAuthenticated()).toBe(true);
 
     // Logout
-    act(() => {
+    await act(async () => {
       result.current.logout();
+      await new Promise(resolve => setTimeout(resolve, 0)); // Allow state update
     });
 
     expect(result.current.isAuthenticated()).toBe(false);
   });
 
-  it("should maintain authentication state across component re-renders", () => {
+  it("should maintain authentication state across component re-renders", async () => {
+    const storage = {};
+    localStorage.getItem.mockImplementation((key) => storage[key] || null);
+    localStorage.setItem.mockImplementation((key, value) => { storage[key] = value; });
+    localStorage.removeItem.mockImplementation((key) => { delete storage[key]; });
+
     const wrapper = ({ children }) => <AuthProvider>{children}</AuthProvider>;
     const { result, rerender } = renderHook(() => useAuth(), { wrapper });
 
-    act(() => {
+    await act(async () => {
       result.current.login("persistent-token", { id: 1, username: "test" });
+      await new Promise(resolve => setTimeout(resolve, 0)); // Allow state update
     });
 
     expect(result.current.isAuthenticated()).toBe(true);

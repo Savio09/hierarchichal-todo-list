@@ -127,7 +127,7 @@ python3 app.py  # That's it! SQLite auto-creates tables
 # 5. In a new terminal, start frontend
 cd ../frontend
 npm install
-npm run dev
+npm run dev or npm start
 ```
 
 Visit **http://localhost:5173** and start testing! 🎉
@@ -275,7 +275,7 @@ The backend server will start on **http://127.0.0.1:5000**
 cd frontend
 
 # Start the development server
-npm run dev
+npm run dev or npm start
 ```
 
 The React app will start on **http://localhost:5173**

@@ -31,10 +31,20 @@ describe("Dashboard Component", () => {
       return null;
     });
 
-    // Mock fetch responses
-    global.fetch.mockResolvedValue({
-      ok: true,
-      json: async () => [],
+    // Mock fetch responses - handle both /api/lists and /api/auth/me
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        // Mock user data response
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      // Default: mock lists response (empty array)
+      return Promise.resolve({
+        ok: true,
+        json: async () => [],
+      });
     });
   });
 
@@ -72,23 +82,45 @@ describe("Dashboard Component", () => {
       { id: 2, name: "Work", tasks: [] },
     ];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      if (url.includes("/api/lists")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => mockLists,
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => [],
+      });
     });
 
     renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText("Personal")).toBeInTheDocument();
+      expect(screen.getAllByText("Personal")[0]).toBeInTheDocument();
       expect(screen.getByText("Work")).toBeInTheDocument();
     });
   });
 
   it("should display empty state when no lists exist", async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => [],
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => [],
+      });
     });
 
     renderDashboard();
@@ -101,9 +133,17 @@ describe("Dashboard Component", () => {
   it("should show Add Task button when a list is selected", async () => {
     const mockLists = [{ id: 1, name: "My List", tasks: [] }];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
     });
 
     renderDashboard();
@@ -114,11 +154,34 @@ describe("Dashboard Component", () => {
   });
 
   it("should display Active and Completed tabs", async () => {
+    const mockLists = [
+      {
+        id: 1,
+        name: "Tasks",
+        tasks: []
+      }
+    ];
+
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
+    });
+
     renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText("Active")).toBeInTheDocument();
-      expect(screen.getByText("Completed")).toBeInTheDocument();
+      const activeButton = screen.getByRole("button", { name: /Active/i });
+      const completedButton = screen.getByRole("button", { name: /Completed/i });
+      expect(activeButton).toBeInTheDocument();
+      expect(completedButton).toBeInTheDocument();
     });
   });
 
@@ -139,9 +202,17 @@ describe("Dashboard Component", () => {
       },
     ];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
     });
 
     renderDashboard();
@@ -179,9 +250,17 @@ describe("Dashboard Component", () => {
   it("should open new task modal when Add Task button is clicked", async () => {
     const mockLists = [{ id: 1, name: "My List", tasks: [] }];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
     });
 
     renderDashboard();
@@ -209,9 +288,17 @@ describe("Dashboard Component", () => {
       },
     ];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
     });
 
     renderDashboard();
@@ -229,7 +316,7 @@ describe("Dashboard Component", () => {
     renderDashboard();
 
     await waitFor(() => {
-      const logoutButton = screen.getByTitle("Logout");
+      const logoutButton = screen.getByText("Logout");
       userEvent.click(logoutButton);
     });
 
@@ -259,9 +346,17 @@ describe("Dashboard Component", () => {
       },
     ];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
     });
 
     renderDashboard();
@@ -279,19 +374,27 @@ describe("Dashboard Component", () => {
         tasks: [
           {
             id: 1,
-            description: "Parent",
+            description: "Parent Task",
             completed: false,
             subtasks: [
-              { id: 2, description: "Child", completed: false, subtasks: [] },
+              { id: 2, description: "Child 1", completed: false, subtasks: [] },
             ],
           },
         ],
       },
     ];
 
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockLists,
+    global.fetch.mockImplementation((url) => {
+      if (url.includes("/api/auth/me")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 1, username: "testuser", email: "test@example.com" }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockLists,
+      });
     });
 
     renderDashboard();
