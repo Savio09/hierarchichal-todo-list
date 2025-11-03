@@ -116,9 +116,15 @@ class Task(db.Model):
 
     def can_have_subtasks(self):
         """Determine if the task can have subtasks.
-        Limited to 3 levels (0, 1, 2), so only tasks at depth 0 and 1 can have subtasks.
+        Now allows infinite nesting (no depth limit).
         """
-        return self.get_depth() < 2
+        return True
+
+    def set_completion_cascade(self, completed_status):
+        """Set completion status for this task and all its subtasks recursively."""
+        self.completed = completed_status
+        for subtask in self.subtasks:
+            subtask.set_completion_cascade(completed_status)
 
     def to_dict(self, include_subtasks=True):
         result = {

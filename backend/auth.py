@@ -30,8 +30,8 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    # Create access token
-    access_token = create_access_token(identity=new_user.id)
+    # Create access token (identity must be a string)
+    access_token = create_access_token(identity=str(new_user.id))
 
     return (
         jsonify(
@@ -64,8 +64,8 @@ def login():
     # Login user (for session-based auth)
     login_user(user)
 
-    # Create access token (for JWT auth)
-    access_token = create_access_token(identity=user.id)
+    # Create access token (for JWT auth - identity must be a string)
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify(
         {
