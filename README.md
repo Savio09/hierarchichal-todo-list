@@ -17,7 +17,7 @@ A modern, feature-rich todo list application that enables users to organize task
 
 ## Demo
 
-_Coming soon - Add your Loom video link here_
+[Loom video](https://www.loom.com/share/755132e933774426a107bc4616833c5d)
 
 ## Technologies Used
 
