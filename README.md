@@ -87,15 +87,52 @@ hierarchichal-todo-list/
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
+### 🚀 Quick Start (For Testing - No PostgreSQL Required!)
+
+Want to test the app quickly without setting up PostgreSQL? Follow these steps:
+
+```bash
+# 1. Clone and navigate
+git clone https://github.com/Savio09/hierarchichal-todo-list.git
+cd hierarchichal-todo-list
+
+# 2. Backend setup
+cd backend
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+# 3. Create .env with SQLite (no database installation needed!)
+echo 'DATABASE_URL=sqlite:///dev.db' > .env
+echo 'SECRET_KEY=test-secret-key' >> .env
+echo 'JWT_SECRET_KEY=test-jwt-secret-key' >> .env
+
+# 4. Start backend
+python3 app.py  # That's it! SQLite auto-creates tables
+
+# 5. In a new terminal, start frontend
+cd ../frontend
+npm install
+npm run dev
+```
+
+Visit **http://localhost:5173** and start testing! 🎉
+
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
 
+**Required:**
+
 - **Node.js** (v18 or later)
 - **npm** (v9 or later)
 - **Python** (v3.9 or later)
-- **PostgreSQL** (v12 or later) - For production
 - **Git** - Version control
+
+**Optional:**
+
+- **PostgreSQL** (v12 or later) - Only if you want to use PostgreSQL instead of SQLite
+  - For quick testing, SQLite is built into Python - no installation needed!
 
 ### Installation
 
@@ -125,14 +162,61 @@ touch .env
 
 **Configure `.env` file:**
 
+For **PostgreSQL** (production/cloud database):
+
 ```env
 DATABASE_URL=postgresql://username:password@localhost:5432/your_database
 SECRET_KEY=your-secret-key-here
 JWT_SECRET_KEY=your-jwt-secret-key-here
 ```
 
-> **Note:** For development, you can use SQLite by setting:
-> `DATABASE_URL=sqlite:///dev.db`
+For **SQLite** (simple testing - no PostgreSQL needed):
+
+```env
+DATABASE_URL=sqlite:///dev.db
+SECRET_KEY=your-secret-key-here
+JWT_SECRET_KEY=your-jwt-secret-key-here
+```
+
+> **🎯 Quick Start Tip:** If you don't have PostgreSQL installed and just want to test the app, use SQLite! Simply set `DATABASE_URL=sqlite:///dev.db` and skip the database initialization step. SQLite works out of the box with zero setup.
+
+**Initialize the Database:**
+
+After configuring your `.env` file, you need to create the database tables:
+
+```bash
+# If using PostgreSQL - REQUIRED before first run
+python3 init_db.py
+
+# If using SQLite - OPTIONAL (tables auto-create, but you can still run this)
+python3 init_db.py
+```
+
+**Alternative method using Python shell:**
+
+```bash
+python3
+>>> from app import app, db
+>>> with app.app_context():
+...     db.create_all()
+>>> exit()
+```
+
+> **📊 Database Choice Guide:**
+>
+> | Database       | Setup Required?          | Best For                                    | Installation                     |
+> | -------------- | ------------------------ | ------------------------------------------- | -------------------------------- |
+> | **SQLite**     | ❌ No setup needed       | Testing, development, quick demos           | ✅ Built into Python             |
+> | **PostgreSQL** | ✅ Must run `init_db.py` | Production, cloud deployment, team projects | Requires PostgreSQL installation |
+>
+> **Why is this necessary?**
+>
+> - **SQLite**: Creates tables automatically when the app starts (perfect for testing!)
+> - **PostgreSQL**: Requires explicit table creation using `db.create_all()` before use
+> - The `init_db.py` script ensures tables (`users`, `lists`, `tasks`) exist before you run the app
+>
+> **What if I skip this step with PostgreSQL?**
+> You'll encounter errors like: `relation "users" does not exist` when trying to register or log in.
 
 #### 3. Frontend Setup
 
@@ -155,11 +239,20 @@ cd backend
 # Activate virtual environment (if not already activated)
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
+# Initialize database (REQUIRED for PostgreSQL, OPTIONAL for SQLite)
+python3 init_db.py
+
 # Start the Flask server
 python3 app.py
 ```
 
 The backend server will start on **http://127.0.0.1:5000**
+
+> **💡 Testing without PostgreSQL?**
+>
+> 1. Set `DATABASE_URL=sqlite:///dev.db` in your `.env` file
+> 2. Skip `init_db.py` if you want (SQLite auto-creates tables)
+> 3. Just run `python3 app.py` and you're good to go!
 
 #### Running the Frontend
 
@@ -226,12 +319,6 @@ npm run test:coverage
 chmod +x run_all_tests.sh
 ./run_all_tests.sh
 ```
-
-**Test Coverage:**
-
-- Backend: ~95% coverage (56 tests)
-- Frontend: ~90% coverage (25 tests)
-- **Total: 81 tests**
 
 ## API Endpoints
 
