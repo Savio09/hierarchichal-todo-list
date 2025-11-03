@@ -2,24 +2,24 @@
 
 A modern, feature-rich todo list application that enables users to organize tasks hierarchically with **infinite nesting depth**. Built with Flask and React, featuring user authentication, real-time updates, and a beautiful, intuitive interface.
 
-## ✨ Features
+## Features
 
-- 🔐 **User Authentication** - Secure sign up and login with JWT tokens
-- 📋 **Multiple Lists** - Create and manage multiple todo lists (collections)
-- ✅ **Hierarchical Tasks** - Create tasks with infinite subtask nesting
-- 🔄 **Smart Completion** - Auto-complete parent tasks when all children are done
-- 🎯 **Task Management** - Edit, delete, and move tasks between lists
-- 📱 **Responsive Design** - Works seamlessly on desktop and mobile
-- 👤 **User Indicators** - Live avatar with active status indicator
-- 🎨 **Modern UI** - Clean, beautiful interface with smooth animations
-- 🔍 **Task Filtering** - View active or completed tasks separately
-- 🧪 **Comprehensive Tests** - 81 unit tests across backend and frontend
+- **User Authentication** - Secure sign up and login with JWT tokens
+- **Multiple Lists** - Create and manage multiple todo lists (collections)
+- **Hierarchical Tasks** - Create tasks with infinite subtask nesting
+- **Smart Completion** - Auto-complete parent tasks when all children are done
+- **Task Management** - Edit, delete, and move tasks between lists
+- **Responsive Design** - Works seamlessly on desktop and mobile
+- **User Indicators** - Live avatar with active status indicator
+- **Modern UI** - Clean, beautiful interface with smooth animations
+- **Task Filtering** - View active or completed tasks separately
+- **Comprehensive Tests** - 81 unit tests across backend and frontend
 
-## 🎥 Demo
+## Demo
 
 _Coming soon - Add your Loom video link here_
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Backend
 
@@ -36,7 +36,7 @@ _Coming soon - Add your Loom video link here_
 - [Vite](https://vitejs.dev/) - Build tool and dev server
 - [Vitest](https://vitest.dev/) - Testing framework
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 hierarchichal-todo-list/
@@ -52,33 +52,47 @@ hierarchichal-todo-list/
 │   ├── models.py                # Database models (User, List, Task)
 │   ├── auth.py                  # Authentication routes
 │   ├── routes.py                # API endpoints
+│   ├── init_db.py               # Database initialization script
 │   ├── requirements.txt         # Python dependencies
 │   ├── .env                     # Environment variables (create this)
-│   └── TESTING.md              # Backend testing guide
+│   ├── .env.example             # Example environment variables
+│   ├── AUTHENTICATION.md        # Authentication documentation
+│   └── TESTING.md               # Backend testing guide
 │
 ├── frontend/                    # React frontend
 │   ├── public/                  # Static assets
 │   ├── src/
+│   │   ├── assets/             # Images, fonts, etc.
 │   │   ├── components/         # Reusable React components
+│   │   │   ├── Header.jsx
 │   │   │   ├── Logo.jsx
-│   │   │   └── SignIn.jsx
+│   │   │   ├── SignIn.jsx
+│   │   │   └── SignIn.css
 │   │   ├── contexts/           # React contexts
 │   │   │   └── AuthContext.jsx
 │   │   ├── pages/              # Page components
 │   │   │   ├── Home.jsx
 │   │   │   └── Dashboard.jsx
 │   │   ├── styles/             # CSS stylesheets
+│   │   │   ├── AuthForm.css
+│   │   │   ├── Dashboard.css
+│   │   │   └── Home.css
 │   │   ├── test/               # Frontend tests (25 tests)
 │   │   │   ├── setup.js
 │   │   │   ├── AuthContext.test.jsx
 │   │   │   └── Dashboard.test.jsx
 │   │   ├── App.jsx             # Main app component
+│   │   ├── App.css             # App-level styles
 │   │   └── main.jsx            # Entry point
+│   ├── index.html              # HTML entry point
 │   ├── package.json            # NPM dependencies
+│   ├── package-lock.json       # NPM lockfile
 │   ├── vite.config.js          # Vite configuration
+│   ├── eslint.config.js        # ESLint configuration
+│   ├── README.md               # Frontend-specific README
 │   └── TESTING.md              # Frontend testing guide
 │
-├── README.md                    # This file
+├── README.md                    # This file (main documentation)
 ├── TESTING_OVERVIEW.md         # Complete testing documentation
 └── .gitignore                  # Git ignore rules
 ```
@@ -178,7 +192,7 @@ SECRET_KEY=your-secret-key-here
 JWT_SECRET_KEY=your-jwt-secret-key-here
 ```
 
-> **🎯 Quick Start Tip:** If you don't have PostgreSQL installed and just want to test the app, use SQLite! Simply set `DATABASE_URL=sqlite:///dev.db` and skip the database initialization step. SQLite works out of the box with zero setup.
+> ** Quick Start Tip:** If you don't have PostgreSQL installed and just want to test the app, use SQLite! Simply set `DATABASE_URL=sqlite:///dev.db` and skip the database initialization step. SQLite works out of the box with zero setup.
 
 **Initialize the Database:**
 
@@ -204,10 +218,10 @@ python3
 
 > **📊 Database Choice Guide:**
 >
-> | Database       | Setup Required?          | Best For                                    | Installation                     |
-> | -------------- | ------------------------ | ------------------------------------------- | -------------------------------- |
-> | **SQLite**     | ❌ No setup needed       | Testing, development, quick demos           | ✅ Built into Python             |
-> | **PostgreSQL** | ✅ Must run `init_db.py` | Production, cloud deployment, team projects | Requires PostgreSQL installation |
+> | Database       | Setup Required?       | Best For                                    | Installation                     |
+> | -------------- | --------------------- | ------------------------------------------- | -------------------------------- |
+> | **SQLite**     | No setup needed       | Testing, development, quick demos           | Built into Python                |
+> | **PostgreSQL** | Must run `init_db.py` | Production, cloud deployment, team projects | Requires PostgreSQL installation |
 >
 > **Why is this necessary?**
 >
@@ -248,7 +262,7 @@ python3 app.py
 
 The backend server will start on **http://127.0.0.1:5000**
 
-> **💡 Testing without PostgreSQL?**
+> ** Testing without PostgreSQL?**
 >
 > 1. Set `DATABASE_URL=sqlite:///dev.db` in your `.env` file
 > 2. Skip `init_db.py` if you want (SQLite auto-creates tables)
@@ -408,9 +422,9 @@ This project is part of a college assignment.
 
 - GitHub: [@Savio09](https://github.com/Savio09)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- Assignment provided by [Your University/Course Name]
+- Assignment provided by Minerva University
 - Inspired by modern task management applications
 - Built with love by [Fortune Declan](https://declann.codes)
 
