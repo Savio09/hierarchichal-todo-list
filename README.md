@@ -428,6 +428,10 @@ This project is part of a college assignment.
 - Inspired by modern task management applications
 - Built with love by [Fortune Declan](https://declann.codes)
 
+## A.I. Notes
+
+I used Copilot to assist me with writing some of the logic and bug fixes. I also used Copilot to assist me with comments for the code.
+
 ---
 
 **Note:** Remember to create a `.env` file in the backend directory with your database credentials before running the application.

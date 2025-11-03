@@ -29,13 +29,23 @@ def create_app(config=None):
     if config:
         app.config.update(config)
     else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+        database_url = os.getenv("DATABASE_URL")
+        app.config["SQLALCHEMY_DATABASE_URI"] = database_url
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-            "pool_pre_ping": True,
-            "pool_recycle": 300,
-            "connect_args": {"sslmode": "require"},
-        }
+
+        # Configure engine options based on database type
+        if database_url and database_url.startswith("postgresql"):
+            # PostgreSQL-specific configuration
+            app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+                "pool_pre_ping": True,
+                "pool_recycle": 300,
+                "connect_args": {"sslmode": "require"},
+            }
+        else:
+            # SQLite configuration (or other databases)
+            app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+                "pool_pre_ping": True,
+            }
 
     # Secret key for sessions and JWT
     app.config["SECRET_KEY"] = os.getenv(
